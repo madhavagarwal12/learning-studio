@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" style="scroll-padding-top: 80px;">
 <head>
@@ -6,54 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learning Studio | Live AI Learning</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.cdnfonts.com/css/nohemi" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f8f8;
-            --accent: #8B1538;
-            --accent-hover: #A0153E;
-            --text-primary: #111111;
-            --text-secondary: #555555;
-            --border-color: rgba(0, 0, 0, 0.08);
-        }
+        * { box-sizing: border-box; }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Nohemi', sans-serif;
+            background-color: #ffffff;
+            color: #111111;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cccccc;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent);
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f5f5f5; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f472b6; }
 
-        .nohemi-thin { font-weight: 200; }
-        .nohemi-light { font-weight: 300; }
+        .nohemi-thin    { font-weight: 300; }
+        .nohemi-light   { font-weight: 300; }
         .nohemi-regular { font-weight: 400; }
-        .nohemi-medium { font-weight: 500; }
-        .nohemi-bold { font-weight: 700; }
+        .nohemi-medium  { font-weight: 500; }
+        .nohemi-semibold{ font-weight: 600; }
+        .nohemi-bold    { font-weight: 700; }
         .nohemi-extrabold { font-weight: 800; }
-        .nohemi-black { font-weight: 900; }
+        .nohemi-black   { font-weight: 900; }
 
-        html {
-            scroll-behavior: smooth;
+        .jetbrains { font-family: 'JetBrains Mono', monospace; }
+
+        html { scroll-behavior: smooth; }
+
+        .btn-primary {
+            background: #f472b6;
+            color: #ffffff;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
+        .btn-primary:hover {
+            background: #ec4899;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(244, 114, 182, 0.25);
+        }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-ghost {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            color: #111111;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(0, 0, 0, 0.25);
+            background: #f9f9f9;
+            transform: translateY(-1px);
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+        }
+        .card:hover {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.09);
+            transform: translateY(-3px);
+            border-color: rgba(0, 0, 0, 0.13);
+        }
+
+        .section-alt { background: #f8f8f8; }
+        .section-dark { background: #0c0c14; }
+
+        .divider { border-top: 1px solid rgba(0, 0, 0, 0.07); }
+
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+        .live-dot { animation: live-pulse 2.2s ease-in-out infinite; }
     </style>
 <script type="importmap">
 {
