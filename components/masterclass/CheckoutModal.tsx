@@ -6,6 +6,7 @@ const WEBHOOK_URL = 'https://n8n.srv816930.hstgr.cloud/webhook/enroll-course';
 const ORIGINAL_PRICE = 999;
 const BASE_PRICE = 499;
 const RECORDING_ADDON_PRICE = 399;
+const OFFER_CODE = 'uwpxkowyzpqx';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -103,15 +104,28 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
         ) : (
           <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto px-6 md:px-8 py-6 space-y-8">
-              <p className="text-[#A1A1A1] italic text-sm">A focused, live 1:1 session to build a real business tool with AI—no upsells, no fluff.</p>
+              <p className="text-[#A1A1A1] italic text-sm">2-Hour LIVE AI Website &amp; Dashboard Workshop. No upsells. No BS.</p>
+
+              {/* Special offer banner */}
+              <div className="bg-[#337418]/10 border border-[#C8FF32]/30 p-4 flex gap-4 items-start">
+                <span className="material-symbols-outlined text-[#C8FF32]">celebration</span>
+                <div className="space-y-1">
+                  <p className="font-bold text-white text-sm">You just unlocked a special offer!</p>
+                  <p className="text-xs text-[#A1A1A1]">Exclusive price applied just for you with code <span className="text-[#C8FF32] font-mono">{OFFER_CODE}</span></p>
+                </div>
+              </div>
 
               {/* Event details */}
               <section className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#2A2D40] border border-[#2A2D40] overflow-hidden">
                 <div className="bg-[#08090C] p-4 flex items-center gap-3">
-                  <span className="material-symbols-outlined text-[#C8FF32] text-sm">event_available</span>
-                  <span className="text-xs font-bold text-white">Scheduled after booking</span>
+                  <span className="material-symbols-outlined text-[#C8FF32] text-sm">calendar_today</span>
+                  <span className="text-xs font-bold text-white">Sunday, 26th July 2026</span>
                 </div>
-                <div className="bg-[#08090C] p-4 flex items-center gap-3 md:col-span-1">
+                <div className="bg-[#08090C] p-4 flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[#C8FF32] text-sm">schedule</span>
+                  <span className="text-xs font-bold text-white">11:00 AM – 2:00 PM IST</span>
+                </div>
+                <div className="bg-[#08090C] p-4 flex items-center gap-3 md:col-span-2">
                   <span className="material-symbols-outlined text-[#C8FF32] text-sm">videocam</span>
                   <span className="text-xs font-bold text-white uppercase tracking-widest">Google Meet</span>
                 </div>
@@ -130,7 +144,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
               <section className="space-y-3">
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-[#C8FF32] tracking-[0.2em] uppercase">Launch Price</span>
+                    <span className="text-[10px] font-bold text-[#C8FF32] tracking-[0.2em] uppercase">Special Price Unlocked!</span>
                     <div className="flex items-center gap-3">
                       <span className="text-lg text-[#A1A1A1] line-through">₹{ORIGINAL_PRICE}</span>
                       <span className="bg-[#FF4545] text-white px-2 py-0.5 text-[10px] font-bold">50% OFF</span>
@@ -147,6 +161,12 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                 <div className="flex justify-between items-center pt-3 border-t border-[#2A2D40]">
                   <span className="text-sm font-bold uppercase tracking-widest text-white">Total</span>
                   <span className="text-2xl font-bold text-[#C8FF32]">₹{total}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs py-3 border-y border-[#2A2D40]">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[#C8FF32] text-sm">sell</span>
+                    <span className="text-[#A1A1A1]"><span className="text-[#C8FF32] font-mono">{OFFER_CODE}</span> applied — saving ₹{ORIGINAL_PRICE - BASE_PRICE}</span>
+                  </div>
                 </div>
               </section>
 
@@ -191,6 +211,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                     </p>
                   </div>
                 </label>
+              </section>
+
+              {/* Bonus */}
+              <section className="bg-[#26293C]/50 border border-white/5 p-6 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🎁</span>
+                  <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white">Bonus</span>
+                </div>
+                <p className="text-sm font-bold text-white">Free Live Q&amp;A — 1 Week After</p>
+                <p className="text-xs text-[#A1A1A1]">7 days to practice → collect real doubts → get them answered live. No extra charge.</p>
               </section>
 
               {status === 'error' && (

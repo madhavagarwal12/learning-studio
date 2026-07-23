@@ -39,24 +39,26 @@ const TOOLS = [
   { logo: GithubLogo, name: 'GitHub', desc: 'The "Safe" for version control.' },
 ];
 
+const DEMO_LINK = 'https://ecxel-dash.vercel.app/';
+
 const PROOF_ITEMS = [
-  { image: ProofSaas, title: 'SaaS Analytics Dashboard' },
-  { image: ProofFintech, title: 'Fintech Portfolio Tracker' },
-  { image: ProofEcommerce, title: 'E-commerce Sales Platform' },
-  { image: ProofCrm, title: 'CRM Pipeline Tool' },
+  { image: ProofSaas, title: 'SaaS Enterprise Revenue & Churn Dashboard', builder: 'Priya Sharma' },
+  { image: ProofEcommerce, title: 'E-commerce Global Sales & Analytics Platform', builder: 'Rohan Gupta' },
+  { image: ProofCrm, title: 'Sales Pipeline & CRM Lead Management Tool', builder: 'Ananya Iyer' },
+  { image: ProofFintech, title: 'Fintech Portfolio & Market Trend Analysis', builder: 'Vikram Singh' },
 ];
 
 const FOR_YOU = [
   "You have an idea and you're done waiting for a \"technical co-founder\" to show up.",
-  'You want to build something once and have it keep working for you.',
+  'You want to build something once and have it keep working — and earning — without you.',
   "You're willing to follow a real, step-by-step build process, not just watch someone else build.",
-  'You want a finished, working product at the end—not just a certificate.',
+  'You want a finished, paying product at the end — not just a certificate.',
 ];
 
 const NOT_FOR_YOU = [
   'You\'re looking for a "get rich quick" button.',
   'You want theory and inspiration, not actual building.',
-  "You're not willing to sit down and build, step by step, alongside the session.",
+  "You're not willing to sit down and build, step by step, alongside the course.",
   'You already have a technical co-founder or dev team handling this for you.',
 ];
 
@@ -88,7 +90,7 @@ const MasterclassPage: React.FC = () => {
       {/* Announcement bar */}
       <div className="bg-[#C8FF32] text-[#08090C] py-[3px] px-6 text-center border-b border-white/10">
         <span className="font-bold uppercase tracking-[0.1em] text-[11px]">
-          ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
+          ⚡ GUARANTEE: NO UPSELLS. EVER. 100% PRACTICAL LIVE WORKSHOP.
         </span>
       </div>
 
@@ -125,7 +127,7 @@ const MasterclassPage: React.FC = () => {
               Build Real Business <span className="text-[#C8FF32] italic">Websites &amp; Dashboards</span> with AI
             </h1>
             <p className="text-[16px] md:text-[18px] text-[#E5E5E5] mb-8 max-w-xl">
-              A focused, live 1:1 session to master the exact workflow for building, deploying, and shipping high-value business tools using AI—no coding required.
+              Master the exact workflow to build, deploy, and scale high-value SaaS products from scratch using AI.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-5">
               <button
@@ -158,20 +160,23 @@ const MasterclassPage: React.FC = () => {
         <section className="py-16 md:py-24 bg-[#08090C] overflow-hidden border-b border-[#2A2D40]">
           <div className="max-w-[1280px] mx-auto px-6 mb-12 text-center lg:text-left">
             <h2 className="text-[36px] md:text-[48px] font-['Instrument_Serif'] italic leading-tight">Proof of Execution</h2>
-            <p className="text-[18px] text-[#A1A1A1] mt-2">Real business tools built by students in previous live sessions.</p>
+            <p className="text-[18px] text-[#A1A1A1] mt-2">Actual products built by students in our previous 120-minute sessions.</p>
           </div>
           <div className="relative flex overflow-x-hidden">
             <div className="marquee-track gap-6 px-6">
               {[...PROOF_ITEMS, ...PROOF_ITEMS].map((item, i) => (
-                <div key={i} className="w-[320px] flex-shrink-0 bg-[#13151D] border border-[#2A2D40] p-4 group">
+                <a key={i} href={DEMO_LINK} target="_blank" rel="noopener noreferrer" className="w-[320px] flex-shrink-0 bg-[#13151D] border border-[#2A2D40] p-4 group block">
                   <div className="block overflow-hidden mb-4 aspect-video border border-[#2A2D40]">
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <span className="text-[#C8FF32] text-[11px] font-bold uppercase tracking-widest">Built in a live session</span>
+                    <span className="text-[#C8FF32] text-[11px] font-bold uppercase tracking-widest">Built in last session</span>
                     <h4 className="text-white font-bold text-[16px] leading-tight">{item.title}</h4>
+                    <div className="flex items-center justify-between mt-2 pt-3 border-t border-[#2A2D40]/50">
+                      <span className="text-[#A1A1A1] text-[14px]">Builder: <span className="text-white font-medium">{item.builder}</span></span>
+                    </div>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -181,8 +186,8 @@ const MasterclassPage: React.FC = () => {
         <section className="py-16 md:py-24 px-6 bg-[#08090C] border-b border-[#2A2D40]" id="curriculum">
           <div className="max-w-[1280px] mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-[36px] md:text-[48px] mb-4 italic font-['Instrument_Serif'] leading-tight">What You'll Master in the Session</h2>
-              <p className="text-[16px] text-[#C8FF32] font-medium uppercase tracking-widest">From raw idea to live, data-driven business tool</p>
+              <h2 className="text-[36px] md:text-[48px] mb-4 italic font-['Instrument_Serif'] leading-tight">What You'll Master in 120 Minutes</h2>
+              <p className="text-[16px] text-[#C8FF32] font-medium uppercase tracking-widest">From raw ideas to live, data-driven business tools</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l border-t border-[#2A2D40]">
               {MASTER_MODULES.map((m, i) => (
@@ -200,9 +205,9 @@ const MasterclassPage: React.FC = () => {
         <section className="py-16 md:py-24 px-6 bg-[#08090C]">
           <div className="max-w-[1280px] mx-auto">
             <div className="text-center mb-16">
-              <span className="text-[#C8FF32] font-bold uppercase tracking-[0.2em] text-[12px] mb-4 block">Free Bonus</span>
+              <span className="text-[#C8FF32] font-bold uppercase tracking-[0.2em] text-[12px] mb-4 block">Exclusive Bonus</span>
               <h2 className="text-[36px] md:text-[48px] mb-4 italic font-['Instrument_Serif']">The AI Builder Resource Kit</h2>
-              <p className="text-[16px] text-[#8B8FA3]">Included with every booking, at no extra cost.</p>
+              <p className="text-[16px] text-[#8B8FA3]">Comprehensive guides to accelerate your development workflow.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-l border-t border-[#2A2D40]">
               {BONUS_KIT.map((b, i) => (
@@ -224,6 +229,7 @@ const MasterclassPage: React.FC = () => {
               <ul className="space-y-4 list-none">
                 <li className="pl-2 border-l-2 border-[#2A2D40]">You've watched hours of YouTube tutorials, followed along perfectly, and still ended up with a broken app and a browser full of error messages.</li>
                 <li className="pl-2 border-l-2 border-[#2A2D40]">You've had an idea sitting in your Notes app for months because "I'm not technical enough to build it" keeps winning the argument.</li>
+                <li className="pl-2 border-l-2 border-[#2A2D40]">You've priced out a developer or agency, seen the ₹50,000+ quote and 6-week timeline, and closed the tab.</li>
                 <li className="pl-2 border-l-2 border-[#2A2D40]">You've finished an "AI course" that taught you how to write better prompts—but you still can't explain how to actually launch something people can use.</li>
               </ul>
               <p>The gap isn't coding skill. It's not money.</p>
@@ -239,7 +245,7 @@ const MasterclassPage: React.FC = () => {
         <section className="py-16 md:py-24 px-6 bg-[#0D0F16]" id="process">
           <div className="max-w-[1280px] mx-auto text-center">
             <h2 className="text-[36px] md:text-[48px] mb-4 italic font-['Instrument_Serif']">You Just Need These <span className="text-[#C8FF32] underline decoration-2">FREE</span> Tools</h2>
-            <p className="text-[16px] text-[#8B8FA3] font-medium uppercase tracking-widest mb-16">Total setup cost: ₹0</p>
+            <p className="text-[16px] text-[#8B8FA3] font-medium uppercase tracking-widest mb-16">Total Setup Cost: ₹0.00</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l border-t border-[#2A2D40]">
               {TOOLS.map((t, i) => (
                 <div key={i} className="border-r border-b border-[#2A2D40] p-10 flex flex-col items-center text-center bg-[#08090C]">
@@ -289,18 +295,18 @@ const MasterclassPage: React.FC = () => {
                     </tr>
                     <tr>
                       <td className="p-6 font-bold uppercase tracking-tight text-[13px]">Format</td>
-                      <td className="p-6 text-[15px] text-[#A1A1A1]">30+ hours of video</td>
-                      <td className="p-6 font-bold text-[16px]">Live 1:1 session</td>
+                      <td className="p-6 text-[15px] text-[#A1A1A1]">30+ Hours (Video)</td>
+                      <td className="p-6 font-bold text-[16px]">2 Hours (Live)</td>
                     </tr>
                     <tr>
                       <td className="p-6 font-bold uppercase tracking-tight text-[13px]">Tool Stack</td>
-                      <td className="p-6 text-[15px] text-[#A1A1A1]">Paid subscriptions</td>
-                      <td className="p-6 font-bold text-[16px]">100% free tools</td>
+                      <td className="p-6 text-[15px] text-[#A1A1A1]">Paid Subscriptions</td>
+                      <td className="p-6 font-bold text-[16px]">100% Free Tools</td>
                     </tr>
                     <tr>
                       <td className="p-6 font-bold uppercase tracking-tight text-[13px]">End Result</td>
                       <td className="p-6 text-[#A1A1A1] text-[15px]">Certificate (PDF)</td>
-                      <td className="p-6 font-bold text-[#C8FF32] text-[16px] underline decoration-2">A live, working product</td>
+                      <td className="p-6 font-bold text-[#C8FF32] text-[16px] underline decoration-2">Finished Live URL</td>
                     </tr>
                   </tbody>
                 </table>
@@ -347,11 +353,11 @@ const MasterclassPage: React.FC = () => {
                   Cart expires in: <span className="text-[#C8FF32] font-bold not-italic">{cartTimer}</span>
                 </span>
               </div>
-              <div className="text-[#8B8FA3] text-[13px] font-bold uppercase tracking-widest">Limited seats per cohort</div>
+              <div className="text-[#8B8FA3] text-[13px] font-bold uppercase tracking-widest">Limited to 30 Seats per Cohort</div>
             </div>
             <div className="p-10 md:p-16 text-center">
               <h2 className="text-[32px] md:text-[44px] mb-6 italic font-['Instrument_Serif']">Ready to Build?</h2>
-              <p className="text-[#A1A1A1] text-[16px] mb-6 max-w-md mx-auto">Live 1:1 session on Google Meet, session recording available as an add-on, and the full AI Builder Resource Kit included.</p>
+              <p className="text-[#A1A1A1] text-[16px] mb-6 max-w-md mx-auto">2-hour live workshop on Google Meet, session recording available as an add-on, and the full AI Builder Resource Kit included.</p>
               <div className="flex items-center justify-center gap-3 mb-8">
                 <span className="text-[#A1A1A1] line-through text-[16px]">₹{ORIGINAL_PRICE}</span>
                 <span className="bg-[#FF4545] text-white px-2 py-0.5 text-[10px] font-bold uppercase">50% off launch price</span>
@@ -362,7 +368,7 @@ const MasterclassPage: React.FC = () => {
               >
                 Pay ₹{PRICE} and Book My Seat →
               </button>
-              <p className="text-[#8B8FA3] text-[12px] uppercase tracking-widest mt-6">Limited seats per cohort</p>
+              <p className="text-[#8B8FA3] text-[12px] uppercase tracking-widest mt-6">Limited to 30 Seats per Cohort</p>
             </div>
           </div>
         </section>
