@@ -12,6 +12,7 @@ import ProofSaas from '../images/masterclass/proof-saas-dashboard.png';
 import ProofFintech from '../images/masterclass/proof-fintech-dashboard.png';
 import ProofEcommerce from '../images/masterclass/proof-ecommerce-dashboard.png';
 import ProofCrm from '../images/masterclass/proof-crm-dashboard.png';
+import HeroVideo from '../../videos/f62517e9a064e5bc444ee11008e75aeb.mp4';
 
 const MASTER_MODULES = [
   { icon: 'auto_fix_high', title: 'Modernize Legacy Sites', desc: 'Transform old, clunky websites into modern, high-converting digital experiences.' },
@@ -78,17 +79,19 @@ const CrossIcon: React.FC = () => (
 const MasterclassPage: React.FC = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isStickyBarDismissed, setIsStickyBarDismissed] = useState(false);
-  const priceTimer = useCountdown(15 * 60);
+  const priceTimer = useCountdown(10 * 60);
   const cartTimer = useCountdown(10 * 60);
   const stickyBarTimer = useCountdown(10 * 60);
 
   return (
     <div className="min-h-screen bg-[#08090C] text-white font-['DM_Sans'] antialiased selection:bg-[#C8FF32] selection:text-[#08090C] pb-24">
       {/* Announcement bar */}
-      <div className="bg-[#C8FF32] text-[#08090C] py-3 px-6 text-center border-b border-white/10">
-        <span className="font-bold uppercase tracking-[0.1em] text-[12px]">
-          ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
-        </span>
+      <div className="flex justify-center">
+        <div className="bg-[#C8FF32] text-[#08090C] py-3 px-6 text-center border-b border-x border-white/10 w-1/2 min-w-[280px]">
+          <span className="font-bold uppercase tracking-[0.1em] text-[12px]">
+            ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
+          </span>
+        </div>
       </div>
 
       {/* Header */}
@@ -108,39 +111,48 @@ const MasterclassPage: React.FC = () => {
 
       <main>
         {/* Hero */}
-        <section className="py-16 md:py-24 px-6 overflow-hidden relative">
-          <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div className="text-center lg:text-left">
-              <h1 className="text-[40px] md:text-[64px] mb-6 leading-[1.1] tracking-tight font-['Instrument_Serif']">
-                Build Real Business <span className="text-[#C8FF32] italic">Websites &amp; Dashboards</span> with AI
-              </h1>
-              <p className="text-[18px] text-[#A1A1A1] mb-10 max-w-xl mx-auto lg:mx-0">
-                A focused, live 1:1 session to master the exact workflow for building, deploying, and shipping high-value business tools using AI—no coding required.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-6">
-                <button
-                  onClick={() => setIsCheckoutOpen(true)}
-                  className="w-full sm:w-auto bg-[#C8FF32] text-[#08090C] px-8 py-5 rounded-xl font-bold text-[18px] hover:opacity-90 transition-all uppercase tracking-tight"
-                >
-                  Pay ₹{PRICE} and Book My Seat →
-                </button>
-              </div>
-              <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
-                <span className="text-[#A1A1A1] line-through text-[15px]">₹{ORIGINAL_PRICE}</span>
-                <span className="bg-[#FF4545] text-white px-2 py-0.5 text-[10px] font-bold uppercase">50% off launch price</span>
-              </div>
-              <div className="flex items-center justify-center lg:justify-start gap-6 text-[#A1A1A1]">
-                <span className="flex items-center gap-1.5 text-[14px] font-medium">
-                  <span className="material-symbols-outlined text-[#C8FF32] text-[20px]">videocam</span>
-                  Live on Google Meet
-                </span>
-              </div>
+        <section className="relative h-[88vh] min-h-[640px] overflow-hidden">
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src={HeroVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#08090C]/70 via-[#08090C]/50 to-[#08090C]" />
+
+          <div className="relative z-10 h-full flex flex-col items-center justify-start text-center px-6 pt-12 md:pt-16">
+            <h1 className="text-[36px] md:text-[64px] mb-5 leading-[1.1] tracking-tight font-['Instrument_Serif'] max-w-4xl">
+              Build Real Business <span className="text-[#C8FF32] italic">Websites &amp; Dashboards</span> with AI
+            </h1>
+            <p className="text-[16px] md:text-[18px] text-[#E5E5E5] mb-8 max-w-xl">
+              A focused, live 1:1 session to master the exact workflow for building, deploying, and shipping high-value business tools using AI—no coding required.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-5">
+              <button
+                onClick={() => setIsCheckoutOpen(true)}
+                className="w-full sm:w-auto bg-[#C8FF32] text-[#08090C] px-8 py-5 rounded-xl font-bold text-[18px] hover:opacity-90 transition-all uppercase tracking-tight"
+              >
+                Pay ₹{PRICE} and Book My Seat →
+              </button>
             </div>
-            <div className="relative">
-              <div className="relative border border-[#2A2D40] shadow-2xl overflow-hidden">
-                <img src={ProofSaas} alt="Live workshop preview" className="w-full h-full object-cover aspect-video opacity-90" />
-              </div>
+            <div className="flex items-center justify-center gap-3 mb-5">
+              <span className="text-[#A1A1A1] line-through text-[15px]">₹{ORIGINAL_PRICE}</span>
+              <span className="bg-[#FF4545] text-white px-2 py-0.5 text-[10px] font-bold uppercase">50% off launch price</span>
             </div>
+            <div className="flex items-center justify-center gap-6 text-[#A1A1A1]">
+              <span className="flex items-center gap-1.5 text-[14px] font-medium">
+                <span className="material-symbols-outlined text-[#C8FF32] text-[20px]">videocam</span>
+                Live on Google Meet
+              </span>
+            </div>
+          </div>
+
+          {/* Scroll cue */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-[#A1A1A1]">
+            <span className="text-[10px] uppercase tracking-[0.2em]">Scroll</span>
+            <span className="material-symbols-outlined text-[20px]">expand_more</span>
           </div>
         </section>
 

@@ -16,7 +16,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({ fullName: '', email: '', phone: '' });
   const [wantsRecording, setWantsRecording] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const offerTimer = useCountdown(8 * 60 + 1);
+  const offerTimer = useCountdown(10 * 60);
 
   if (!isOpen) return null;
 
