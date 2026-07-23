@@ -86,21 +86,21 @@ const MasterclassPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#08090C] text-white font-['DM_Sans'] antialiased selection:bg-[#C8FF32] selection:text-[#08090C] pb-24">
       {/* Announcement bar */}
-      <div className="bg-[#C8FF32] text-[#08090C] py-1.5 px-6 text-center border-b border-white/10">
-        <span className="font-bold uppercase tracking-[0.1em] text-[12px]">
+      <div className="bg-[#C8FF32] text-[#08090C] py-[3px] px-6 text-center border-b border-white/10">
+        <span className="font-bold uppercase tracking-[0.1em] text-[11px]">
           ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
         </span>
       </div>
 
       {/* Header */}
       <header className="bg-[#08090C]/90 backdrop-blur-md w-full border-b border-[#2A2D40]">
-        <div className="flex justify-between items-center h-20 px-6 max-w-[1280px] mx-auto">
-          <div className="text-[22px] font-['Instrument_Serif'] font-bold text-white">
+        <div className="flex justify-between items-center h-10 px-6 max-w-[1280px] mx-auto">
+          <div className="text-[18px] font-['Instrument_Serif'] font-bold text-white">
             Learning <span className="text-[#C8FF32] italic">Studio</span>
           </div>
           <button
             onClick={() => setIsCheckoutOpen(true)}
-            className="bg-[#C8FF32] text-[#08090C] px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-[13px] hover:opacity-90 transition-all"
+            className="bg-[#C8FF32] text-[#08090C] px-4 py-1.5 rounded-lg font-bold uppercase tracking-wider text-[12px] hover:opacity-90 transition-all"
           >
             Reserve Seat
           </button>
