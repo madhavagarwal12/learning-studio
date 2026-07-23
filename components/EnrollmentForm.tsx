@@ -33,42 +33,41 @@ const EnrollmentForm: React.FC = () => {
     }
   };
 
-  const inputClass = `w-full px-4 py-3.5 rounded-xl text-[#111111] placeholder:text-[#bbb] font-normal outline-none transition-all duration-200`;
+  const inputClass = `w-full px-4 py-3.5 rounded-xl text-on-surface placeholder:text-outline/60 font-body outline-none transition-all duration-200`;
   const inputStyle = {
     background: '#ffffff',
-    border: '1px solid rgba(0,0,0,0.12)',
+    border: '1px solid rgba(11,28,48,0.12)',
     fontSize: '15px',
   };
-  const inputFocusStyle = `focus:ring-2 focus:ring-[#f472b6]/20 focus:border-[#f472b6]`;
+  const inputFocusStyle = `focus:ring-2 focus:ring-primary/20 focus:border-primary`;
 
   return (
     <FadeIn>
-      <div className="bg-white rounded-2xl p-8 md:p-12" style={{ border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 4px 32px rgba(0,0,0,0.06)' }}>
+      <div className="bg-white rounded-2xl p-8 md:p-12 border border-outline-variant shadow-2xl">
         <div className="mb-10 text-center">
-          <p className="jetbrains text-[11px] font-medium tracking-[0.1em] uppercase text-[#f472b6] mb-4">
+          <p className="font-label text-label-md uppercase text-primary mb-4">
             Reserve Your Seat
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#111111] mb-3" style={{ letterSpacing: '-0.02em' }}>
+          <h2 className="font-display text-headline-lg mb-3">
             Enroll in the Course
           </h2>
-          <p className="text-[#777777] font-normal text-base">
+          <p className="text-secondary font-body text-base">
             Madhav will reach out within 24 hours to schedule your discovery call.
           </p>
-          <div className="h-px w-10 bg-[#f472b6] mx-auto mt-6" style={{ opacity: 0.5 }} />
         </div>
 
         {status === 'success' ? (
           <div className="text-center py-12">
-            <div className="w-14 h-14 rounded-full bg-[#f472b6] flex items-center justify-center mx-auto mb-6">
-              <span className="material-icons-outlined text-2xl text-white">check</span>
+            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-2xl text-white">check</span>
             </div>
-            <h3 className="text-2xl font-bold text-[#111111] mb-3">Request Received</h3>
-            <p className="text-[#777777] font-normal mb-8 max-w-sm mx-auto leading-relaxed">
+            <h3 className="font-display text-2xl font-bold text-on-surface mb-3">Request Received</h3>
+            <p className="text-secondary font-body mb-8 max-w-sm mx-auto leading-relaxed">
               Thank you for your interest. Madhav Agarwal will be in touch within 24 hours.
             </p>
             <button
               onClick={() => setStatus('idle')}
-              className="text-[#f472b6] font-medium text-sm underline underline-offset-4 hover:text-[#ec4899] transition-colors"
+              className="text-primary font-medium text-sm underline underline-offset-4 hover:opacity-80 transition-colors"
             >
               Submit another request
             </button>
@@ -76,7 +75,7 @@ const EnrollmentForm: React.FC = () => {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="fullName" className="block jetbrains text-[11px] font-medium text-[#999] uppercase tracking-[0.08em] mb-2">
+              <label htmlFor="fullName" className="block font-label text-label-md text-secondary uppercase mb-2">
                 Full Name *
               </label>
               <input
@@ -89,7 +88,7 @@ const EnrollmentForm: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="email" className="block jetbrains text-[11px] font-medium text-[#999] uppercase tracking-[0.08em] mb-2">
+                <label htmlFor="email" className="block font-label text-label-md text-secondary uppercase mb-2">
                   Email *
                 </label>
                 <input
@@ -100,7 +99,7 @@ const EnrollmentForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="block jetbrains text-[11px] font-medium text-[#999] uppercase tracking-[0.08em] mb-2">
+                <label htmlFor="phone" className="block font-label text-label-md text-secondary uppercase mb-2">
                   Phone *
                 </label>
                 <input
@@ -113,7 +112,7 @@ const EnrollmentForm: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="message" className="block jetbrains text-[11px] font-medium text-[#999] uppercase tracking-[0.08em] mb-2">
+              <label htmlFor="message" className="block font-label text-label-md text-secondary uppercase mb-2">
                 Message (Optional)
               </label>
               <textarea
@@ -125,8 +124,8 @@ const EnrollmentForm: React.FC = () => {
             </div>
 
             {status === 'error' && (
-              <div className="p-4 rounded-xl flex items-center space-x-3 text-sm text-red-700" style={{ background: '#fef2f2', border: '1px solid rgba(239,68,68,0.2)' }}>
-                <span className="material-icons-outlined text-sm text-red-500">error_outline</span>
+              <div className="p-4 rounded-xl flex items-center space-x-3 text-sm text-error" style={{ background: '#fff2f1', border: '1px solid rgba(186,26,26,0.2)' }}>
+                <span className="material-symbols-outlined text-sm">error_outline</span>
                 <span className="font-normal">Something went wrong. Please try again or contact us directly.</span>
               </div>
             )}
@@ -134,24 +133,24 @@ const EnrollmentForm: React.FC = () => {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className={`w-full py-4 px-8 rounded-xl font-semibold text-base flex items-center justify-center space-x-2 mt-2 ${
-                status === 'loading' ? 'opacity-50 cursor-not-allowed bg-[#f472b6] text-white' : 'btn-primary cursor-pointer'
+              className={`w-full py-4 px-8 rounded-xl font-display font-bold text-base flex items-center justify-center space-x-2 mt-2 transition-all ${
+                status === 'loading' ? 'opacity-50 cursor-not-allowed bg-primary text-white' : 'bg-primary text-white hover:scale-[1.02] hover:shadow-xl shadow-primary/20 cursor-pointer btn-shimmer'
               }`}
             >
               {status === 'loading' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span className="jetbrains text-sm tracking-wide">Processing...</span>
+                  <span className="font-label text-sm tracking-wide">Processing...</span>
                 </>
               ) : (
                 <>
                   <span style={{ letterSpacing: '0.02em' }}>Submit Enrollment Request</span>
-                  <span className="material-icons-outlined text-base">arrow_forward</span>
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </>
               )}
             </button>
 
-            <p className="jetbrains text-[10px] text-center text-[#cccccc] uppercase tracking-[0.12em] pt-1">
+            <p className="font-label text-[10px] text-center text-outline uppercase tracking-[0.12em] pt-1">
               Your data is secured and used only for enrollment.
             </p>
           </form>

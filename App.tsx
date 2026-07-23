@@ -1,14 +1,48 @@
 
-import React, { useState } from 'react';
-import { TESTIMONIALS, FAQ_DATA, CURRICULUM } from './constants';
-import SectionHeading from './components/SectionHeading';
+import React, { useEffect, useRef, useState } from 'react';
+import { TESTIMONIALS, FAQ_DATA, PROBLEM_POINTS, OLD_WAY, STUDIO_WAY, TRANSFORMATION_STEPS, CURRICULUM_MODULES, FOR_YOU, NOT_FOR_YOU, VALUE_STACK } from './constants';
 import FadeIn from './components/FadeIn';
 import EnrollmentForm from './components/EnrollmentForm';
 import HeroImage from './components/images/Group 1.png';
 
+const NAV_LINKS = [
+  { label: 'Process', id: 'process' },
+  { label: 'Curriculum', id: 'curriculum' },
+  { label: 'Results', id: 'results' },
+  { label: 'FAQ', id: 'faq' },
+];
+
 const App: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [showAllModules, setShowAllModules] = useState(false);
+  const [openModules, setOpenModules] = useState<Record<number, boolean>>({});
+  const curriculumSectionRef = useRef<HTMLDivElement>(null);
+  const curriculumLineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const section = curriculumSectionRef.current;
+      const line = curriculumLineRef.current;
+      if (!section || !line) return;
+      const rect = section.getBoundingClientRect();
+      const winH = window.innerHeight;
+      if (rect.top < winH && rect.bottom > 0) {
+        const scrolledRatio = Math.max(0, Math.min(1, (winH - rect.top) / (winH + rect.height)));
+        line.style.height = `${scrolledRatio * 100}%`;
+      }
+    };
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, id: string) => {
     e.preventDefault();
@@ -20,83 +54,69 @@ const App: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const features = [
-    { icon: 'auto_awesome',    title: 'Prompt Engineering',   desc: 'Write prompts that get professional-grade results every timefor writing, code, planning, and analysis. The foundational skill.' },
-    { icon: 'description',     title: 'Product Planning',     desc: 'Turn a raw idea into a full PRD using Claude. Scope your MVP, define user stories, and plan your app before building anything.' },
-    { icon: 'favorite',        title: 'Build with Lovable',   desc: 'Ship a complete database-backed web app with Lovable and Supabaseno code written, production-quality output.' },
-    { icon: 'cloud_upload',    title: 'Deploy to Production', desc: 'Take your app from local to a real URL. Vercel setup, environment variables, custom domaineverything to go live.' },
-    { icon: 'visibility',      title: 'Live Debugging',       desc: "Debug your builds with the group in real-time. Walk away knowing how to unblock yourself on any future project." },
-    { icon: 'workspace_premium', title: 'Lifetime Community', desc: 'Discord and Skool community access with monthly calls and a network of professionals building with AI alongside you.' },
-  ];
+  const visibleModules = showAllModules ? CURRICULUM_MODULES : CURRICULUM_MODULES.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-white text-[#111111] selection:bg-[#f472b6] selection:text-white">
+    <div className="min-h-screen bg-background text-on-background font-body antialiased selection:bg-primary selection:text-white overflow-x-hidden">
 
       {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md" style={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <nav
+        className={`sticky top-0 w-full z-50 transition-all duration-500 border-b ${
+          scrolled ? 'nav-scrolled bg-surface/90 backdrop-blur-md border-outline-variant/30 shadow-[0_4px_30px_rgba(0,0,0,0.03)]' : 'bg-transparent border-transparent'
+        }`}
+      >
+        <div className="max-w-container-max mx-auto px-6 md:px-margin-x flex justify-between items-center h-20">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-base font-bold tracking-tight text-[#111111] hover:text-[#f472b6] transition-colors"
-            style={{ letterSpacing: '-0.01em' }}
+            className="font-display text-lg font-bold text-on-surface hover:text-primary transition-colors"
           >
             Learning Studio
           </button>
 
-          <div className="hidden md:flex items-center space-x-8">
-            {[
-              { label: 'Process', id: 'about' },
-              { label: 'Curriculum', id: 'curriculum' },
-              { label: 'Results', id: 'testimonials' },
-              { label: 'FAQ', id: 'faq' },
-            ].map(link => (
+          <div className="hidden md:flex items-center gap-8">
+            {NAV_LINKS.map(link => (
               <a
                 key={link.id}
                 href={`#${link.id}`}
                 onClick={e => scrollToSection(e, link.id)}
-                className="text-sm font-medium text-[#777777] hover:text-[#111111] transition-colors"
+                className="font-label text-label-md text-on-surface-variant hover:text-primary transition-colors"
               >
                 {link.label}
               </a>
             ))}
             <button
               onClick={e => scrollToSection(e as any, 'enroll')}
-              className="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold"
+              className="btn-shimmer bg-primary text-on-primary px-6 py-2.5 rounded-full font-label text-label-md font-bold hover:scale-105 hover:shadow-xl shadow-primary/20 transition-all"
             >
               Reserve Seat
             </button>
           </div>
 
           <button
-            className="md:hidden text-[#111111]"
+            className="md:hidden text-on-surface"
             onClick={() => setIsMobileMenuOpen(p => !p)}
             aria-label="Toggle menu"
           >
-            <span className="material-icons-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
+            <span className="material-symbols-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white" style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}>
-            <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col space-y-1">
-              {[
-                { label: 'Process', id: 'about' },
-                { label: 'Curriculum', id: 'curriculum' },
-                { label: 'Results', id: 'testimonials' },
-                { label: 'FAQ', id: 'faq' },
-              ].map(link => (
+          <div className="md:hidden bg-surface border-t border-outline-variant/30">
+            <div className="max-w-container-max mx-auto px-6 py-4 flex flex-col space-y-1">
+              {NAV_LINKS.map(link => (
                 <a
                   key={link.id}
                   href={`#${link.id}`}
                   onClick={e => handleNavClick(e, link.id)}
-                  className="text-sm font-medium text-[#777777] hover:text-[#111111] py-3 transition-colors"
+                  className="font-label text-label-md text-on-surface-variant hover:text-primary py-3 transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
               <button
                 onClick={e => handleNavClick(e as any, 'enroll')}
-                className="btn-primary px-5 py-3 rounded-xl text-sm font-semibold mt-2 text-center"
+                className="bg-primary text-on-primary px-5 py-3 rounded-full font-label text-label-md font-bold mt-2 text-center"
               >
                 Reserve Seat
               </button>
@@ -105,432 +125,470 @@ const App: React.FC = () => {
         )}
       </nav>
 
-      {/* ── Hero ── */}
-      <section className="pt-32 pb-20 md:pt-48 md:pb-32 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <FadeIn direction="right">
-            <div>
-              {/* Live badge */}
-              <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full mb-8" style={{ background: '#fdf2f8', border: '1px solid rgba(244,114,182,0.15)' }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#f472b6] live-dot" />
-                <span className="jetbrains text-[11px] font-medium text-[#f472b6] tracking-[0.06em]">
-                  Next batch starting soon · 5 seats max
-                </span>
-              </div>
-
-              {/* Headline */}
-              <h1
-                className="text-5xl md:text-7xl lg:text-[80px] font-extrabold text-[#111111] leading-none mb-6"
-                style={{ letterSpacing: '-0.03em' }}
-              >
-                Build Real Apps
-                <br />
-                <span className="text-[#f472b6]">with AI.</span>
+      <main>
+        {/* ── Hero ── */}
+        <section className="hero-gradient pt-16 pb-20 md:pt-24 md:pb-section-gap px-6 md:px-margin-x overflow-hidden">
+          <div className="max-w-container-max mx-auto text-center">
+            <FadeIn>
+              <span className="inline-block px-4 py-1.5 bg-secondary-container text-on-secondary-container rounded-full font-label text-label-md mb-8">
+                ADMISSIONS OPEN · 5 SEATS MAX
+              </span>
+              <h1 className="font-display text-display-lg-mobile md:text-display-xl max-w-4xl mx-auto mb-8">
+                Stop Learning AI. <span className="text-primary">Start Building</span> Products People Actually Use.
               </h1>
-
-              <p className="text-lg text-[#555555] font-normal mb-8 max-w-lg leading-relaxed">
-                A live, hands-on program for working professionals. Plan, build, and ship a real web app using Claude, Lovable, Supabase, and Vercelno coding experience needed. 1-on-5 cohorts.
+              <p className="font-body text-body-lg text-secondary max-w-2xl mx-auto mb-12">
+                A high-performance, live accelerator for working professionals. Go from conceptual theory to shipping a full-stack, AI-powered product in 9 sessions—no coding experience needed.
               </p>
-
-              {/* Stats */}
-              <div className="flex flex-wrap gap-8 mb-10 py-5" style={{ borderTop: '1px solid rgba(0,0,0,0.07)', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-                {[
-                  { label: 'Instructor', value: 'Madhav Agarwal' },
-                  { label: 'Duration', value: '9 Sessions' },
-                  { label: 'Investment', value: '₹15,000' },
-                ].map((s, i) => (
-                  <div key={i}>
-                    <div className="jetbrains text-[10px] font-medium text-[#aaaaaa] uppercase tracking-[0.1em] mb-1">{s.label}</div>
-                    <div className="font-bold text-[#111111] text-lg">{s.value}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-10">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
                 <button
                   onClick={e => scrollToSection(e as any, 'enroll')}
-                  className="btn-primary px-9 py-4 rounded-xl font-semibold text-base"
+                  className="btn-shimmer bg-primary text-white px-9 py-4 rounded-full font-display font-bold text-base hover:scale-105 hover:shadow-xl shadow-primary/20 transition-all"
                 >
                   Secure Your Seat
                 </button>
                 <button
                   onClick={e => scrollToSection(e as any, 'curriculum')}
-                  className="btn-ghost px-9 py-4 rounded-xl font-semibold text-base flex items-center justify-center space-x-2"
+                  className="px-9 py-4 rounded-full border border-outline-variant font-display font-bold text-base hover:bg-surface-container transition-all"
                 >
-                  <span className="material-icons-outlined text-base text-[#f472b6]">play_circle</span>
-                  <span>View Syllabus</span>
+                  View Curriculum
                 </button>
               </div>
-
-              {/* Tool stack */}
-              <div className="flex flex-wrap gap-2">
-                {['Claude', 'Lovable', 'Supabase', 'Vercel'].map(tool => (
-                  <span
-                    key={tool}
-                    className="jetbrains text-[11px] font-medium px-3 py-1.5 rounded-lg text-[#555555]"
-                    style={{ background: '#f5f5f5', border: '1px solid rgba(0,0,0,0.08)' }}
-                  >
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="left" delay={200}>
-            <div className="relative">
-              <div
-                className="rounded-2xl overflow-hidden"
-                style={{
-                  border: '1px solid rgba(0,0,0,0.09)',
-                  boxShadow: '0 24px 64px rgba(0,0,0,0.1)',
-                  aspectRatio: '16/10',
-                }}
-              >
-                <img
-                  src={HeroImage}
-                  alt="Learning Studio Live Session"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div
-                    className="w-14 h-14 rounded-full bg-[#f472b6] flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
-                    style={{ boxShadow: '0 8px 24px rgba(244,114,182,0.35)' }}
-                  >
-                    <span className="material-icons-outlined text-2xl text-white">play_arrow</span>
-                  </div>
-                </div>
-                <div
-                  className="absolute bottom-4 left-4 px-3 py-1.5 rounded-lg"
-                  style={{ background: 'rgba(255,255,255,0.92)', border: '1px solid rgba(0,0,0,0.08)' }}
-                >
-                  <span className="jetbrains text-[10px] font-medium text-[#555555] tracking-[0.08em] uppercase">
-                    Live Session Preview
-                  </span>
+            </FadeIn>
+            <FadeIn delay={150}>
+              <div className="relative mt-16 hero-float">
+                <div className="rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/20" style={{ aspectRatio: '16/9' }}>
+                  <img src={HeroImage} alt="Learning Studio Live Session" className="w-full h-full object-cover" />
                 </div>
               </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
+            </FadeIn>
+          </div>
+        </section>
 
-      {/* ── Social proof strip ── */}
-      <div className="section-alt py-8 px-6 divider" style={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-12">
-          {[
-            { value: '40%+', label: 'Avg. salary increase' },
-            { value: '5 seats', label: 'Per cohort, max' },
-            { value: '100%', label: 'Ship a live product' },
-            { value: '₹15K', label: 'All-inclusive fee' },
-          ].map((s, i) => (
-            <div key={i} className="text-center">
-              <div className="text-xl font-bold text-[#111111]" style={{ letterSpacing: '-0.02em' }}>{s.value}</div>
-              <div className="jetbrains text-[10px] font-medium text-[#aaaaaa] uppercase tracking-[0.08em] mt-0.5">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── About / The Live Advantage ── */}
-      <section id="about" className="py-24 md:py-40 px-6 scroll-mt-20">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            label="Why live?"
-            title="The Live Advantage"
-            subtitle="Real guidance, real feedback, real results. Madhav Agarwal walks you through every stephands-on, interactive, and tailored to your goals."
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f, i) => (
-              <FadeIn key={i} delay={i * 60}>
-                <div className="card p-8 h-full">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-6"
-                    style={{ background: '#fdf2f8' }}
-                  >
-                    <span className="material-icons-outlined text-[#f472b6] text-xl">{f.icon}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-[#111111] mb-3" style={{ letterSpacing: '-0.01em' }}>{f.title}</h3>
-                  <p className="text-[#777777] font-normal text-sm leading-relaxed">{f.desc}</p>
-                </div>
+        {/* ── Results / Success Stories ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-surface-container-lowest" id="results">
+          <div className="max-w-container-max mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+              <FadeIn className="max-w-xl">
+                <h2 className="font-display text-headline-lg mb-4">Real People, Real Outcomes</h2>
+                <p className="font-body text-body-lg text-secondary">Graduates who started with zero coding experience and used the program to pivot careers, launch agencies, and ship real products.</p>
               </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Curriculum ── */}
-      <section id="curriculum" className="py-24 md:py-40 px-6 scroll-mt-20 section-alt" style={{ borderTop: '1px solid rgba(0,0,0,0.07)', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            label="The syllabus"
-            title="9-Session Curriculum"
-            subtitle="From understanding how Claude thinks to deploying your first real app. Every session builds toward one outcomea live product with your name on it."
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {CURRICULUM.map((item, idx) => (
-              <FadeIn key={idx} delay={idx * 35}>
-                <div
-                  className={`flex bg-white rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md ${
-                    item.week === 9 ? 'ring-1 ring-[#f472b6]/20' : ''
-                  }`}
-                  style={{ border: '1px solid rgba(0,0,0,0.08)' }}
-                >
-                  {/* Week number */}
-                  <div
-                    className="w-16 flex-shrink-0 flex flex-col items-center justify-center"
-                    style={{ borderRight: '1px solid rgba(0,0,0,0.07)', background: item.week === 9 ? '#fdf2f8' : '#fafafa' }}
-                  >
-                    <span className="jetbrains text-[9px] font-medium text-[#cccccc] uppercase tracking-wider mb-0.5">S</span>
-                    <span
-                      className="text-2xl font-extrabold"
-                      style={{ color: '#f472b6', letterSpacing: '-0.02em' }}
-                    >
-                      {item.week}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5 flex-1 min-w-0">
-                    <div className="flex items-center gap-2.5 mb-1.5">
-                      <span className="material-icons-outlined text-[#cccccc] text-base">{item.icon}</span>
-                      <h4 className="font-bold text-[#111111] text-[15px]" style={{ letterSpacing: '-0.01em' }}>
-                        {item.title}
-                      </h4>
-                      {item.week === 9 && (
-                        <span
-                          className="jetbrains text-[9px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wider text-[#f472b6]"
-                          style={{ background: '#fdf2f8', border: '1px solid rgba(244,114,182,0.15)' }}
-                        >
-                          Capstone
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[#777777] text-sm font-normal leading-relaxed mb-3">
-                      {item.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {item.topics.map((topic, t) => (
-                        <span
-                          key={t}
-                          className="jetbrains text-[10px] font-medium px-2.5 py-1 rounded-lg text-[#999999]"
-                          style={{ background: '#f5f5f5', border: '1px solid rgba(0,0,0,0.07)' }}
-                        >
-                          {topic}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-
-          {/* Stack note */}
-          <FadeIn delay={150}>
-            <div
-              className="mt-8 p-5 rounded-xl bg-white flex flex-wrap items-center gap-5"
-              style={{ border: '1px solid rgba(0,0,0,0.08)' }}
-            >
-              <p className="text-sm text-[#555555] font-normal flex-1 min-w-[200px]">
-                <span className="font-semibold text-[#111111]">Every student ships a live app</span> using the same professional stack.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {['Claude', 'Lovable', 'Supabase', 'Vercel'].map(tool => (
-                  <span
-                    key={tool}
-                    className="jetbrains text-[11px] font-medium px-3 py-1.5 rounded-lg text-[#f472b6]"
-                    style={{ background: '#fdf2f8', border: '1px solid rgba(244,114,182,0.12)' }}
-                  >
-                    {tool}
-                  </span>
-                ))}
-              </div>
             </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ── Testimonials ── */}
-      <section id="testimonials" className="py-24 md:py-40 px-6 scroll-mt-20">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            label="Student results"
-            title="Success Stories"
-            subtitle="Graduates who leveraged the program to pivot careers, launch agencies, and ship products that generate real revenue."
-          />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {TESTIMONIALS.map((t, idx) => (
-              <FadeIn key={t.id} delay={idx * 100}>
-                <div className="card p-8 h-full flex flex-col relative">
-                  <span
-                    className="material-icons-outlined absolute top-6 right-6 text-4xl select-none"
-                    style={{ color: 'rgba(244,114,182,0.07)', fontSize: '3.5rem' }}
-                  >
-                    format_quote
-                  </span>
-                  <div className="flex items-center space-x-3 mb-6">
-                    <div
-                      className="w-11 h-11 rounded-full overflow-hidden flex-shrink-0"
-                      style={{ border: '2px solid rgba(244,114,182,0.2)' }}
-                    >
-                      <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div>
-                      <h5 className="font-bold text-[#111111] text-[15px]">{t.name}</h5>
-                      <p className="jetbrains text-[10px] font-medium text-[#aaaaaa] uppercase tracking-[0.06em] mt-0.5">{t.role}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+              {TESTIMONIALS.map((t, idx) => (
+                <FadeIn key={t.id} delay={idx * 100}>
+                  <div className="group border border-outline-variant/30 rounded-xl overflow-hidden hover:border-primary/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col bg-white">
+                    <div className="p-8 flex-1 flex flex-col">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary/20">
+                          <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                          <h3 className="font-display font-bold text-on-surface">{t.name}</h3>
+                          <p className="font-label text-[11px] text-secondary uppercase tracking-wide">{t.role}</p>
+                        </div>
+                      </div>
+                      <span className="inline-block self-start px-3 py-1 rounded-full bg-primary/5 text-primary font-label text-[11px] uppercase tracking-wide mb-4">
+                        {t.outcome}
+                      </span>
+                      <p className="font-body text-body-md text-secondary leading-relaxed italic flex-1">"{t.content}"</p>
                     </div>
                   </div>
-                  <p className="text-[#555555] font-normal leading-relaxed text-sm flex-1 italic relative z-10">
-                    "{t.content}"
-                  </p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section id="faq" className="py-24 md:py-40 px-6 scroll-mt-20 section-alt" style={{ borderTop: '1px solid rgba(0,0,0,0.07)', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-        <div className="max-w-3xl mx-auto">
-          <SectionHeading label="Questions" title="Program Details" />
-          <div className="space-y-2">
-            {FAQ_DATA.map((faq, idx) => (
-              <div
-                key={idx}
-                className="rounded-xl overflow-hidden transition-all duration-200"
-                style={{
-                  background: '#ffffff',
-                  border: openFaq === idx ? '1px solid rgba(244,114,182,0.25)' : '1px solid rgba(0,0,0,0.08)',
-                }}
-              >
-                <button
-                  className="w-full px-6 py-5 flex justify-between items-center text-left"
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                >
-                  <span className={`font-semibold text-[15px] pr-4 transition-colors duration-150 ${openFaq === idx ? 'text-[#f472b6]' : 'text-[#111111]'}`}>
-                    {faq.question}
-                  </span>
-                  <span
-                    className="material-icons-outlined flex-shrink-0 text-[#cccccc] transition-transform duration-300"
-                    style={{ transform: openFaq === idx ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                  >
-                    expand_more
-                  </span>
-                </button>
-                <div
-                  className="overflow-hidden transition-all duration-300 ease-in-out"
-                  style={{ maxHeight: openFaq === idx ? '400px' : '0', opacity: openFaq === idx ? 1 : 0 }}
-                >
-                  <p className="px-6 pb-6 text-[#555555] font-normal leading-relaxed text-sm">
-                    {faq.answer}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Final CTAdark strip ── */}
-      <section className="py-24 md:py-40 px-6 section-dark">
-        <div className="max-w-5xl mx-auto text-center">
-          <FadeIn>
-            <p className="jetbrains text-[11px] font-medium text-[#f472b6] uppercase tracking-[0.1em] mb-6">
-              Ready to ship?
-            </p>
-            <h2
-              className="text-5xl md:text-7xl font-extrabold text-white mb-6"
-              style={{ letterSpacing: '-0.03em', lineHeight: '1.05' }}
-            >
-              Stop planning.
-              <br />
-              Start building.
-            </h2>
-            <p className="text-lg text-[#888888] font-normal mb-12 max-w-lg mx-auto leading-relaxed">
-              5 students per batch. Apply now and have a live product on the internet in 9 sessions.
-            </p>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-5">
-              <button
-                onClick={e => scrollToSection(e as any, 'enroll')}
-                className="btn-primary px-12 py-5 rounded-xl font-semibold text-lg w-full md:w-auto"
-              >
-                Join the Batch
-              </button>
-              <div className="flex flex-wrap items-center justify-center gap-5">
-                {['100% Live', '9 Sessions', '₹15,000'].map((label, i) => (
-                  <div key={i} className="flex items-center space-x-1.5">
-                    <span className="material-icons-outlined text-[#f472b6] text-base">check_circle</span>
-                    <span className="text-sm font-medium text-[#666666]">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ── Enrollment form ── */}
-      <section id="enroll" className="py-24 md:py-40 px-6 scroll-mt-20 section-alt" style={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-        <div className="max-w-2xl mx-auto">
-          <EnrollmentForm />
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer className="py-14 px-6 bg-white" style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-          <div className="flex flex-col space-y-3">
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="text-base font-bold text-[#111111] hover:text-[#f472b6] transition-colors text-left"
-              style={{ letterSpacing: '-0.01em' }}
-            >
-              Learning Studio
-            </button>
-            <p className="text-sm text-[#aaaaaa] font-normal max-w-xs leading-relaxed">
-              Live 1-on-5 sessions to master AI-assisted product development.
-            </p>
-            <p className="jetbrains text-[10px] text-[#dddddd] uppercase tracking-[0.12em] pt-2">
-              © 2024 Learning Studio
-            </p>
-          </div>
-
-          <div className="flex flex-col space-y-4">
-            <h6 className="jetbrains text-[10px] font-medium uppercase tracking-[0.1em] text-[#cccccc]">Contact</h6>
-            <div className="space-y-2.5">
-              {[
-                { icon: 'phone', label: '9587276261', href: 'tel:9587276261' },
-                { icon: 'email', label: 'autopilotstudiojpr@gmail.com', href: 'mailto:autopilotstudiojpr@gmail.com' },
-                { icon: 'public', label: 'autopilot-studio.com', href: 'https://autopilot-studio.com' },
-              ].map((item, i) => (
-                <a
-                  key={i}
-                  href={item.href}
-                  target={item.href.startsWith('http') ? '_blank' : undefined}
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2.5 text-[#999999] hover:text-[#f472b6] transition-colors group"
-                >
-                  <span className="material-icons-outlined text-sm">{item.icon}</span>
-                  <span className="text-sm font-normal">{item.label}</span>
-                </a>
+                </FadeIn>
               ))}
             </div>
           </div>
+        </section>
 
-          <div className="flex flex-col space-y-4 md:items-end">
-            <h6 className="jetbrains text-[10px] font-medium uppercase tracking-[0.1em] text-[#cccccc]">Follow</h6>
-            <a
-              href="https://www.youtube.com/@MadhavTheAiGuy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 text-[#999999] hover:text-[#f472b6] transition-colors"
-            >
-              <span className="material-icons-outlined text-xl">smart_display</span>
-              <span className="text-sm font-normal">YouTube</span>
-            </a>
+        {/* ── The Problem ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-on-background text-white" id="process">
+          <div className="max-w-container-max mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-center">
+              <FadeIn direction="right">
+                <div>
+                  <h2 className="font-display text-display-lg-mobile md:text-display-lg mb-8 leading-tight">
+                    Tutorial Hell is a <br /><span className="text-primary-container">Building Killer.</span>
+                  </h2>
+                  <div className="space-y-8">
+                    {PROBLEM_POINTS.map((p, i) => (
+                      <div key={i} className="flex gap-6 group">
+                        <div className="flex-shrink-0 w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10 group-hover:bg-primary-container/20 group-hover:border-primary-container/50 transition-all duration-300">
+                          <span className="material-symbols-outlined text-primary-container">{p.icon}</span>
+                        </div>
+                        <div>
+                          <h4 className="font-display text-xl font-bold mb-2">{p.title}</h4>
+                          <p className="text-white/60 font-body">{p.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </FadeIn>
+              <FadeIn direction="left" delay={150}>
+                <div className="relative group">
+                  <div className="bg-white/5 rounded-2xl p-8 border border-white/10 aspect-square flex flex-col justify-center hover:bg-white/10 hover:border-primary-container/30 transition-all duration-500">
+                    <div className="text-center">
+                      <span className="material-symbols-outlined text-6xl text-primary-container mb-6 block group-hover:scale-110 transition-transform duration-500">directions_run</span>
+                      <h3 className="font-display text-2xl font-bold mb-4">We break the cycle.</h3>
+                      <p className="text-white/70 max-w-sm mx-auto">No lectures. Only shipping. We teach you the 20% of tools that get you 80% of the way to a production-ready product.</p>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Philosophy ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x">
+          <div className="max-w-container-max mx-auto">
+            <FadeIn>
+              <div className="text-center mb-20">
+                <h2 className="font-display text-headline-lg mb-6">The Learning Studio Philosophy</h2>
+              </div>
+            </FadeIn>
+            <FadeIn delay={100}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-outline-variant/30 rounded-2xl overflow-hidden border border-outline-variant/30">
+                <div className="bg-white p-8 md:p-12 hover:bg-surface transition-colors duration-300">
+                  <h3 className="font-label text-label-md text-secondary uppercase tracking-widest mb-8">THE OLD WAY</h3>
+                  <div className="space-y-6">
+                    {OLD_WAY.map((item, i) => (
+                      <div key={i} className="flex items-center gap-4 text-secondary/60">
+                        <span className="material-symbols-outlined">close</span>
+                        <span className="font-body text-body-lg">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-primary/5 p-8 md:p-12 hover:bg-primary/[0.08] transition-colors duration-300">
+                  <h3 className="font-label text-label-md text-primary uppercase tracking-widest mb-8">THE STUDIO WAY</h3>
+                  <div className="space-y-6">
+                    {STUDIO_WAY.map((item, i) => (
+                      <div key={i} className="flex items-center gap-4 text-on-surface">
+                        <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                        <span className="font-body text-body-lg font-bold">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+
+        {/* ── Transformation Roadmap ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-surface-container-low overflow-hidden">
+          <div className="max-w-container-max mx-auto">
+            <FadeIn>
+              <h2 className="font-display text-headline-lg text-center mb-20">Your Builder Roadmap</h2>
+            </FadeIn>
+            <div className="relative flex flex-col md:flex-row justify-between gap-8">
+              <div className="absolute top-1/2 left-0 w-full h-px bg-outline-variant hidden md:block -z-10" />
+              {TRANSFORMATION_STEPS.map((step, i) => (
+                <FadeIn key={step.step} delay={i * 80} className="flex-1">
+                  <div className="bg-white p-8 rounded-xl border border-outline-variant shadow-sm hover:-translate-y-4 hover:shadow-2xl transition-all duration-300 h-full">
+                    <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold mb-6">{step.step}</div>
+                    <h4 className="font-display text-xl font-bold mb-3">{step.title}</h4>
+                    <p className="font-body text-body-md text-secondary">{step.description}</p>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Meet Your Mentor ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x">
+          <div className="max-w-container-max mx-auto">
+            <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+              <FadeIn direction="right" className="w-full md:w-1/2">
+                <div className="aspect-[4/5] rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 group">
+                  <img
+                    alt="Madhav Agarwal Portrait"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                    src="https://picsum.photos/id/1005/800/1000"
+                  />
+                </div>
+              </FadeIn>
+              <FadeIn direction="left" delay={150} className="w-full md:w-1/2">
+                <div>
+                  <span className="font-label text-label-md text-primary mb-4 block">MEET YOUR MENTOR</span>
+                  <h2 className="font-display text-display-lg-mobile md:text-display-lg mb-8">Madhav Agarwal</h2>
+                  <div className="space-y-6 font-body text-body-lg text-secondary leading-relaxed">
+                    <p>I didn't start as a coder. I started as a builder who was tired of waiting for technical founders to validate my ideas.</p>
+                    <p>Over the last few years I've built and scaled AI-first products and taught hundreds of professionals to do the same. My edge isn't a CS degree—it's knowing exactly which tools to leverage to move at 10x speed.</p>
+                    <p>Learning Studio is the program I wish I had: a high-energy environment where shipping is the only metric that matters.</p>
+                  </div>
+                  <div className="mt-10 pt-10 border-t border-outline-variant flex gap-12">
+                    <div className="group cursor-default">
+                      <div className="font-display text-2xl font-bold text-primary group-hover:scale-110 transition-transform">5</div>
+                      <div className="font-label text-label-md text-secondary">Cohorts Run</div>
+                    </div>
+                    <div className="group cursor-default">
+                      <div className="font-display text-2xl font-bold text-primary group-hover:scale-110 transition-transform">100%</div>
+                      <div className="font-label text-label-md text-secondary">Ship a Live Product</div>
+                    </div>
+                    <div className="group cursor-default">
+                      <div className="font-display text-2xl font-bold text-primary group-hover:scale-110 transition-transform">5</div>
+                      <div className="font-label text-label-md text-secondary">Seats Per Cohort</div>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Curriculum ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-surface" id="curriculum">
+          <div className="max-w-3xl mx-auto">
+            <FadeIn>
+              <div className="text-center mb-16">
+                <h2 className="font-display text-headline-lg mb-4">Deeply Practical Curriculum</h2>
+                <p className="font-body text-body-lg text-secondary">Every module is designed to result in a tangible asset for your product.</p>
+              </div>
+            </FadeIn>
+            <div className="space-y-4 relative" ref={curriculumSectionRef}>
+              <div className="absolute left-[23px] top-0 bottom-0 w-px bg-outline-variant/50">
+                <div ref={curriculumLineRef} className="curriculum-line w-full bg-primary origin-top" />
+              </div>
+              {visibleModules.map((mod, idx) => {
+                const isOpen = !!openModules[idx];
+                return (
+                  <FadeIn key={mod.number} delay={idx * 40} className="relative pl-16 group">
+                    <div className="absolute left-0 top-2 w-12 h-12 rounded-full bg-white border border-outline-variant flex items-center justify-center z-10 group-hover:border-primary group-hover:rotate-12 transition-all duration-300">
+                      <span className="material-symbols-outlined text-secondary group-hover:text-primary">{mod.icon}</span>
+                    </div>
+                    <details
+                      className="bg-white border border-outline-variant rounded-xl overflow-hidden cursor-pointer hover:shadow-md hover:bg-surface-container-lowest transition-all"
+                      onToggle={e => setOpenModules(prev => ({ ...prev, [idx]: (e.target as HTMLDetailsElement).open }))}
+                    >
+                      <summary className="p-6 flex justify-between items-center list-none font-display text-xl font-bold">
+                        <span>{mod.number}. {mod.title}</span>
+                        <span className={`material-symbols-outlined text-secondary transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>expand_more</span>
+                      </summary>
+                      <div className="px-6 pb-6 text-secondary font-body border-t border-outline-variant/30 pt-4">
+                        <p>{mod.description}</p>
+                        {mod.bullets && (
+                          <ul className="mt-4 space-y-2 list-disc list-inside text-sm">
+                            {mod.bullets.map((b, bi) => <li key={bi}>{b}</li>)}
+                          </ul>
+                        )}
+                      </div>
+                    </details>
+                  </FadeIn>
+                );
+              })}
+              {!showAllModules && (
+                <div className="text-center py-8">
+                  <button
+                    onClick={() => setShowAllModules(true)}
+                    className="text-primary font-label text-label-md flex items-center gap-2 mx-auto hover:underline hover:scale-105 transition-transform"
+                  >
+                    View all 9 modules <span className="material-symbols-outlined">expand_more</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Who it's for ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x">
+          <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            <FadeIn direction="right">
+              <div className="p-8 md:p-12 bg-on-background text-white rounded-2xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 h-full">
+                <h3 className="font-display text-headline-lg mb-8">This is for you if...</h3>
+                <ul className="space-y-6">
+                  {FOR_YOU.map((item, i) => (
+                    <li key={i} className="flex gap-4 group">
+                      <span className="material-symbols-outlined text-primary-container group-hover:scale-110 transition-transform">check_circle</span>
+                      <p className="font-body text-body-lg">{item}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </FadeIn>
+            <FadeIn direction="left" delay={100}>
+              <div className="p-8 md:p-12 border border-outline-variant rounded-2xl hover:bg-surface-container transition-all duration-500 h-full">
+                <h3 className="font-display text-headline-lg mb-8">This is NOT for you if...</h3>
+                <ul className="space-y-6">
+                  {NOT_FOR_YOU.map((item, i) => (
+                    <li key={i} className="flex gap-4 group">
+                      <span className="material-symbols-outlined text-error group-hover:scale-110 transition-transform">cancel</span>
+                      <p className="font-body text-body-lg text-secondary">{item}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+
+        {/* ── Investment / Value Stack ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-surface-container-high relative overflow-hidden">
+          <div className="max-w-container-max mx-auto relative z-10">
+            <FadeIn>
+              <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-outline-variant max-w-4xl mx-auto flex flex-col md:flex-row hover:shadow-primary/10 transition-all duration-700">
+                <div className="p-8 md:p-12 md:w-3/5 md:border-r border-outline-variant">
+                  <h2 className="font-display text-headline-lg mb-8">The Studio Value Stack</h2>
+                  <ul className="space-y-4 mb-12">
+                    {VALUE_STACK.map((item, i) => (
+                      <li key={i} className="flex items-start gap-4 hover:translate-x-2 transition-transform duration-300">
+                        <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                        <div>
+                          <span className="font-bold font-display">{item.title}</span>
+                          <p className="text-sm text-secondary">{item.description}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-8 md:p-12 md:w-2/5 bg-primary text-white flex flex-col justify-between text-center transition-all duration-500">
+                  <div>
+                    <span className="font-label text-label-md opacity-80 uppercase tracking-widest">ENROLLMENT FEE</span>
+                    <div className="mt-4 font-display text-display-lg-mobile md:text-display-lg">₹15,000</div>
+                    <p className="mt-2 text-sm opacity-80">One-time payment. Lifetime value.</p>
+                  </div>
+                  <button
+                    onClick={e => scrollToSection(e as any, 'enroll')}
+                    className="btn-shimmer mt-12 w-full py-4 bg-white text-primary rounded-xl font-display font-bold text-lg hover:scale-105 transition-all shadow-xl"
+                  >
+                    Reserve My Seat
+                  </button>
+                  <p className="mt-6 text-xs opacity-60">Limited to 5 builders per cohort for quality focus.</p>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+
+        {/* ── FAQ ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-surface" id="faq">
+          <div className="max-w-3xl mx-auto">
+            <FadeIn>
+              <div className="text-center mb-16">
+                <h2 className="font-display text-headline-lg mb-4">Program Details</h2>
+              </div>
+            </FadeIn>
+            <div className="divide-y divide-outline-variant/30 border-t border-b border-outline-variant/30">
+              {FAQ_DATA.map((faq, idx) => (
+                <FadeIn key={idx} delay={idx * 30}>
+                  <div>
+                    <button
+                      className="w-full py-6 flex justify-between items-center text-left gap-4"
+                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                    >
+                      <span className={`font-display font-bold text-lg transition-colors duration-150 ${openFaq === idx ? 'text-primary' : 'text-on-surface'}`}>
+                        {faq.question}
+                      </span>
+                      <span
+                        className="material-symbols-outlined flex-shrink-0 text-secondary transition-transform duration-300"
+                        style={{ transform: openFaq === idx ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                      >
+                        expand_more
+                      </span>
+                    </button>
+                    <div
+                      className="overflow-hidden transition-all duration-300 ease-in-out"
+                      style={{ maxHeight: openFaq === idx ? '400px' : '0', opacity: openFaq === idx ? 1 : 0 }}
+                    >
+                      <p className="pb-6 text-secondary font-body leading-relaxed text-sm">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Final CTA ── */}
+        <section className="py-16 md:py-section-gap px-6 md:px-margin-x bg-[#0F172A] text-white text-center">
+          <FadeIn className="max-w-2xl mx-auto">
+            <h2 className="font-display text-display-lg-mobile md:text-display-lg mb-8">Stop waiting for the "perfect time".</h2>
+            <p className="font-body text-body-lg text-white/60 mb-12">The gap between idea and execution has never been smaller. Cross it with us.</p>
+            <div className="flex flex-col md:flex-row gap-5 justify-center">
+              <button
+                onClick={e => scrollToSection(e as any, 'enroll')}
+                className="btn-shimmer bg-primary px-12 py-5 rounded-full font-display font-bold text-lg hover:scale-110 transition-all shadow-2xl shadow-primary/40"
+              >
+                Enroll Now — ₹15,000
+              </button>
+              <button
+                onClick={e => scrollToSection(e as any, 'curriculum')}
+                className="px-12 py-5 rounded-full border border-white/20 font-display font-bold text-lg hover:bg-white/5 hover:border-white/40 transition-all"
+              >
+                View Curriculum
+              </button>
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* ── Enrollment form ── */}
+        <section id="enroll" className="py-16 md:py-section-gap px-6 md:px-margin-x bg-surface">
+          <div className="max-w-2xl mx-auto">
+            <EnrollmentForm />
+          </div>
+        </section>
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="bg-surface py-16 md:py-section-gap px-6 md:px-margin-x border-t border-outline-variant/30">
+        <div className="max-w-container-max mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-16">
+            <div className="col-span-1">
+              <div className="font-display text-lg font-bold text-on-surface mb-6">Learning Studio</div>
+              <p className="font-body text-body-md text-secondary">Live 1-on-5 sessions to master AI-assisted product development.</p>
+            </div>
+
+            <div className="flex flex-col space-y-4">
+              <h6 className="font-label text-label-md text-on-surface font-bold uppercase">Contact</h6>
+              <div className="space-y-2.5">
+                {[
+                  { icon: 'call', label: '9587276261', href: 'tel:9587276261' },
+                  { icon: 'mail', label: 'autopilotstudiojpr@gmail.com', href: 'mailto:autopilotstudiojpr@gmail.com' },
+                  { icon: 'public', label: 'autopilot-studio.com', href: 'https://autopilot-studio.com' },
+                ].map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.href}
+                    target={item.href.startsWith('http') ? '_blank' : undefined}
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 text-secondary hover:text-primary transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">{item.icon}</span>
+                    <span className="font-body text-sm">{item.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col space-y-4">
+              <h6 className="font-label text-label-md text-on-surface font-bold uppercase">Program</h6>
+              <ul className="space-y-2.5 font-body text-sm text-secondary">
+                <li><a className="hover:text-primary transition-colors" href="#curriculum" onClick={e => scrollToSection(e as any, 'curriculum')}>Curriculum</a></li>
+                <li><a className="hover:text-primary transition-colors" href="#results" onClick={e => scrollToSection(e as any, 'results')}>Results</a></li>
+                <li><a className="hover:text-primary transition-colors" href="#faq" onClick={e => scrollToSection(e as any, 'faq')}>FAQ</a></li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col space-y-4">
+              <h6 className="font-label text-label-md text-on-surface font-bold uppercase">Follow</h6>
+              <a
+                href="https://www.youtube.com/@MadhavTheAiGuy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-secondary hover:text-primary transition-colors"
+              >
+                <span className="material-symbols-outlined text-xl">smart_display</span>
+                <span className="font-body text-sm">YouTube</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="font-label text-label-md text-secondary">© 2026 LEARNING STUDIO</div>
           </div>
         </div>
       </footer>
