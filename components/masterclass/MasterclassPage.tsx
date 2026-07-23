@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import CheckoutModal from './CheckoutModal';
+import { useCountdown } from './useCountdown';
 import ClaudeLogo from '../images/masterclass/claude-logo.png';
 import GeminiLogo from '../images/masterclass/gemini-logo.png';
 import AiStudioLogo from '../images/masterclass/ai-studio-logo.png';
@@ -76,18 +77,22 @@ const CrossIcon: React.FC = () => (
 
 const MasterclassPage: React.FC = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isStickyBarDismissed, setIsStickyBarDismissed] = useState(false);
+  const priceTimer = useCountdown(15 * 60);
+  const cartTimer = useCountdown(10 * 60);
+  const stickyBarTimer = useCountdown(10 * 60);
 
   return (
-    <div className="min-h-screen bg-[#08090C] text-white font-['DM_Sans'] antialiased selection:bg-[#C8FF32] selection:text-[#08090C]">
+    <div className="min-h-screen bg-[#08090C] text-white font-['DM_Sans'] antialiased selection:bg-[#C8FF32] selection:text-[#08090C] pb-24">
       {/* Announcement bar */}
-      <div className="bg-[#C8FF32] text-[#08090C] py-3 px-6 text-center sticky top-0 z-[60] border-b border-white/10">
+      <div className="bg-[#C8FF32] text-[#08090C] py-3 px-6 text-center border-b border-white/10">
         <span className="font-bold uppercase tracking-[0.1em] text-[12px]">
           ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
         </span>
       </div>
 
       {/* Header */}
-      <header className="bg-[#08090C]/90 backdrop-blur-md sticky top-12 w-full z-50 border-b border-[#2A2D40]">
+      <header className="bg-[#08090C]/90 backdrop-blur-md w-full border-b border-[#2A2D40]">
         <div className="flex justify-between items-center h-20 px-6 max-w-[1280px] mx-auto">
           <div className="text-[22px] font-['Instrument_Serif'] font-bold text-white">
             Learning <span className="text-[#C8FF32] italic">Studio</span>
@@ -260,8 +265,16 @@ const MasterclassPage: React.FC = () => {
                       <td className="p-6 font-bold uppercase tracking-tight text-[13px]">Price</td>
                       <td className="p-6 text-[15px] text-[#A1A1A1]">₹999 – ₹4,999</td>
                       <td className="p-6 font-bold text-[18px]">
-                        <span className="text-[#A1A1A1] line-through text-[14px] mr-2">₹{ORIGINAL_PRICE}</span>
-                        <span className="text-[#C8FF32]">₹{PRICE}</span>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-[#A1A1A1] line-through text-[14px]">₹{ORIGINAL_PRICE}</span>
+                            <span className="text-[#C8FF32] text-[20px]">₹{PRICE}</span>
+                          </div>
+                          <div className="bg-[#C8FF32]/10 border border-[#C8FF32]/20 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 w-fit">
+                            <span className="material-symbols-outlined text-[#C8FF32] text-[14px]">timer</span>
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#C8FF32]">Offer expires in: {priceTimer}</span>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     <tr>
@@ -317,6 +330,15 @@ const MasterclassPage: React.FC = () => {
         {/* Checkout CTA */}
         <section className="py-16 md:py-24 px-6 bg-[#08090C]" id="checkout">
           <div className="max-w-3xl mx-auto bg-[#13151D] border border-[#2A2D40] overflow-hidden">
+            <div className="bg-[#C8FF32]/5 p-5 flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-[#2A2D40]">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[#C8FF32] text-[24px]">timer</span>
+                <span className="text-[16px] md:text-[20px] font-['Instrument_Serif'] italic uppercase tracking-widest">
+                  Cart expires in: <span className="text-[#C8FF32] font-bold not-italic">{cartTimer}</span>
+                </span>
+              </div>
+              <div className="text-[#8B8FA3] text-[13px] font-bold uppercase tracking-widest">Limited seats per cohort</div>
+            </div>
             <div className="p-10 md:p-16 text-center">
               <h2 className="text-[32px] md:text-[44px] mb-6 italic font-['Instrument_Serif']">Ready to Build?</h2>
               <p className="text-[#A1A1A1] text-[16px] mb-6 max-w-md mx-auto">Live 1:1 session on Google Meet, session recording available as an add-on, and the full AI Builder Resource Kit included.</p>
@@ -360,6 +382,43 @@ const MasterclassPage: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Sticky bottom buy bar */}
+      {!isStickyBarDismissed && (
+        <div className="fixed bottom-0 left-0 w-full bg-[#08090C]/95 backdrop-blur-md border-t border-[#C8FF32] z-[100] py-4 px-6">
+          <div className="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex items-center gap-2 text-[#C8FF32]">
+                <span className="material-symbols-outlined text-[20px]">bolt</span>
+                <span className="font-bold uppercase tracking-wider text-[12px]">Launch Price Active</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[#A1A1A1] line-through text-[15px]">₹{ORIGINAL_PRICE}</span>
+                <span className="text-[#C8FF32] text-[22px] font-bold font-['Instrument_Serif']">₹{PRICE}</span>
+                <div className="hidden md:flex items-center gap-1.5 bg-[#C8FF32]/10 border border-[#C8FF32]/20 px-2 py-1 rounded-lg">
+                  <span className="material-symbols-outlined text-[#C8FF32] text-[14px]">timer</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#C8FF32]">Expires in {stickyBarTimer}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <button
+                onClick={() => setIsCheckoutOpen(true)}
+                className="flex-1 sm:flex-none bg-[#C8FF32] text-[#08090C] px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-[14px] hover:opacity-90 transition-all text-center"
+              >
+                Pay ₹{PRICE} and Book My Seat →
+              </button>
+              <button
+                onClick={() => setIsStickyBarDismissed(true)}
+                aria-label="Dismiss"
+                className="text-[#8B8FA3] hover:text-white transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>

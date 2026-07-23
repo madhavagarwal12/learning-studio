@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useCountdown } from './useCountdown';
 
 const WEBHOOK_URL = 'https://n8n.srv816930.hstgr.cloud/webhook/enroll-course';
 const ORIGINAL_PRICE = 999;
@@ -15,6 +16,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({ fullName: '', email: '', phone: '' });
   const [wantsRecording, setWantsRecording] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const offerTimer = useCountdown(8 * 60 + 1);
 
   if (!isOpen) return null;
 
@@ -114,6 +116,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                   <span className="text-xs font-bold text-white uppercase tracking-widest">Google Meet</span>
                 </div>
               </section>
+
+              {/* Urgency timer */}
+              <div className="flex items-center justify-between px-4 py-2 bg-[#FF4545]/10 border border-[#FF4545]/20">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#FF4545] text-sm">hourglass_empty</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#FF4545]">Offer may end in:</span>
+                </div>
+                <span className="text-lg font-mono font-bold text-[#FF4545]">{offerTimer}</span>
+              </div>
 
               {/* Price */}
               <section className="space-y-3">
