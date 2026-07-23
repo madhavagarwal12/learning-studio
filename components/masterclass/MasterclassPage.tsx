@@ -86,12 +86,10 @@ const MasterclassPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#08090C] text-white font-['DM_Sans'] antialiased selection:bg-[#C8FF32] selection:text-[#08090C] pb-24">
       {/* Announcement bar */}
-      <div className="flex justify-center">
-        <div className="bg-[#C8FF32] text-[#08090C] py-3 px-6 text-center border-b border-x border-white/10 w-1/2 min-w-[280px]">
-          <span className="font-bold uppercase tracking-[0.1em] text-[12px]">
-            ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
-          </span>
-        </div>
+      <div className="bg-[#C8FF32] text-[#08090C] py-1.5 px-6 text-center border-b border-white/10">
+        <span className="font-bold uppercase tracking-[0.1em] text-[12px]">
+          ⚡ Live, hands-on session. No upsells. No recordings-only fluff.
+        </span>
       </div>
 
       {/* Header */}
