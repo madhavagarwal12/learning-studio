@@ -53,6 +53,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // fires even if the customer closes the tab right after paying.
   if (event.event === 'payment.captured') {
     const payment = event.payload?.payment?.entity;
+    // The payment entity inherits the notes we attached when creating the
+    // order (see api/create-order.ts) — that's the only place the customer's
+    // name is available, since Razorpay's payment object itself only carries
+    // email/contact.
+    const notes = payment?.notes || {};
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
@@ -60,8 +65,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         body: JSON.stringify({
           submittedAt: new Date().toISOString(),
           course: 'Private Session Masterclass',
-          email: payment?.email,
-          phone: payment?.contact,
+          fullName: notes.fullName || undefined,
+          email: payment?.email || notes.email || undefined,
+          phone: payment?.contact || notes.phone || undefined,
+          addOns: notes.wantsRecording === 'true' ? ['Workshop Recording — Lifetime Access'] : [],
           totalAmount: payment?.amount ? payment.amount / 100 : undefined,
           razorpayOrderId: payment?.order_id,
           razorpayPaymentId: payment?.id,

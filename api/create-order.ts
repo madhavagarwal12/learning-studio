@@ -19,6 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const wantsRecording = req.body?.wantsRecording === true;
+  const { fullName, email, phone } = req.body || {};
   const amountInr = BASE_PRICE_INR + (wantsRecording ? RECORDING_ADDON_PRICE_INR : 0);
 
   try {
@@ -31,7 +32,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       body: JSON.stringify({
         amount: amountInr * 100, // Razorpay expects paise
         currency: 'INR',
-        notes: { wantsRecording: String(wantsRecording) },
+        // Razorpay copies order notes onto the resulting payment entity, so the
+        // webhook (the authoritative record) can read the customer's name back
+        // out — the payment entity itself only carries email/contact, not name.
+        notes: {
+          wantsRecording: String(wantsRecording),
+          fullName: fullName || '',
+          email: email || '',
+          phone: phone || '',
+        },
       }),
     });
 

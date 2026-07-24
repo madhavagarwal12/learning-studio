@@ -65,7 +65,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
       const orderRes = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wantsRecording }),
+        body: JSON.stringify({ wantsRecording, ...formData }),
       });
       const order = await orderRes.json();
       if (!orderRes.ok) {
