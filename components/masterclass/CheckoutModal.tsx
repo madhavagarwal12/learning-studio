@@ -1,12 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCountdown } from './useCountdown';
 
-const WEBHOOK_URL = 'https://n8n.srv816930.hstgr.cloud/webhook/enroll-course';
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+const RAZORPAY_SCRIPT_SRC = 'https://checkout.razorpay.com/v1/checkout.js';
 const ORIGINAL_PRICE = 999;
 const BASE_PRICE = 499;
 const RECORDING_ADDON_PRICE = 399;
 const OFFER_CODE = 'uwpxkowyzpqx';
+
+const loadRazorpayScript = () =>
+  new Promise<boolean>(resolve => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = RAZORPAY_SCRIPT_SRC;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -18,6 +37,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
   const [wantsRecording, setWantsRecording] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const offerTimer = useCountdown(10 * 60);
+
+  useEffect(() => {
+    if (isOpen) loadRazorpayScript();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -31,28 +54,61 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
+
+    const scriptReady = await loadRazorpayScript();
+    if (!scriptReady) {
+      setStatus('error');
+      return;
+    }
+
     try {
-      // NOTE: Razorpay is not wired up yet. This currently captures the booking
-      // request as a lead; once Razorpay is integrated, trigger the checkout
-      // here (e.g. razorpay.open({ amount: total * 100, ... })) before/instead
-      // of posting straight to the webhook, and only mark success on payment
-      // capture (via webhook/callback) rather than on form submit.
-      const response = await fetch(WEBHOOK_URL, {
+      const orderRes = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          submittedAt: new Date().toISOString(),
-          course: 'Private Session Masterclass',
-          addOns: wantsRecording ? ['Workshop Recording — Lifetime Access'] : [],
-          totalAmount: total,
-        }),
+        body: JSON.stringify({ wantsRecording }),
       });
-      if (response.ok) {
-        setStatus('success');
-      } else {
+      const order = await orderRes.json();
+      if (!orderRes.ok) {
         setStatus('error');
+        return;
       }
+
+      const razorpay = new window.Razorpay({
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.orderId,
+        name: 'Learning Studio',
+        description: 'Private Session Masterclass',
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: { color: '#C8FF32' },
+        handler: async (paymentResponse: any) => {
+          try {
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...paymentResponse,
+                ...formData,
+                wantsRecording,
+              }),
+            });
+            setStatus(verifyRes.ok ? 'success' : 'error');
+          } catch {
+            setStatus('error');
+          }
+        },
+        modal: {
+          ondismiss: () => setStatus('idle'),
+        },
+      });
+
+      razorpay.on('payment.failed', () => setStatus('error'));
+      razorpay.open();
     } catch {
       setStatus('error');
     }
@@ -90,9 +146,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
             <div className="w-14 h-14 rounded-full bg-[#C8FF32] flex items-center justify-center mx-auto mb-6">
               <span className="material-symbols-outlined text-2xl text-[#08090C]">check</span>
             </div>
-            <h3 className="font-['Instrument_Serif'] italic text-2xl text-white mb-3">Booking Request Received</h3>
+            <h3 className="font-['Instrument_Serif'] italic text-2xl text-white mb-3">Payment Received — Seat Booked!</h3>
             <p className="text-[#A1A1A1] text-sm mb-8 max-w-sm mx-auto leading-relaxed">
-              We'll confirm your session time and send a secure payment link to <span className="text-white">{formData.email}</span> within 24 hours.
+              A confirmation with session details is on its way to <span className="text-white">{formData.email}</span>.
             </p>
             <button
               onClick={handleClose}
@@ -241,11 +297,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                 }`}
               >
                 {status === 'loading' ? (
-                  <span className="text-lg">Submitting…</span>
+                  <span className="text-lg">Opening secure checkout…</span>
                 ) : (
                   <>
                     <span className="text-lg">Pay ₹{total} and Book My Seat →</span>
-                    <span className="text-[9px] uppercase tracking-widest opacity-70 mt-1">Payment link sent to your email after booking</span>
+                    <span className="text-[9px] uppercase tracking-widest opacity-70 mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[10px]">verified_user</span> Secured by Razorpay
+                    </span>
                   </>
                 )}
               </button>
